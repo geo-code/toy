@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,49 +17,35 @@ public class WordRepository {
             rs.getString("word"),
             rs.getString("reading"),
             rs.getString("meaning"),
-            rs.getString("status")
+            rs.getBoolean("answer")
     );
 
     public List<Word> findAll() {
-        return jdbc.query(
-                "select id, word, reading, meaning, status from words order by id",
-                rowMapper
-        );
+        return jdbc.query("select id, word, reading, meaning, answer from words order by id", rowMapper);
     }
 
     public List<Word> findAllWithWeightedRandom(int limit) {
-        // 오답(wrong) > 미노출(unseen) > 정답(correct) 순으로 가중치
+        // views 낮을수록 + 오답 우선 + 랜덤
         return jdbc.query("""
-                        select id, word, reading, meaning, status from words
-                        order by
-                            case status
-                                when 'wrong' then random() * 0.3
-                                when 'unseen' then random() * 0.6 + 0.3
-                                when 'correct' then random() * 0.1 + 0.9
-                                else random()
-                            end
+                        select id, word, reading, meaning, answer from words
+                        order by views * 0.5 + case when answer then 3 else 0 end + random()
                         limit ?
                         """,
-                rowMapper,
-                limit
-        );
+                rowMapper, limit);
     }
 
-    public Optional<Word> findById(Long id) {
-        var list = jdbc.query(
-                "select id, word, reading, meaning, status from words where id = ?",
-                rowMapper,
-                id
-        );
-        return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
+    public void incrementViews(List<Long> ids) {
+        if (ids.isEmpty()) return;
+        var placeholders = String.join(",", ids.stream().map(_ -> "?").toList());
+        jdbc.update("update words set views = views + 1 where id in (" + placeholders + ")", ids.toArray());
     }
 
     public void save(Word word) {
         jdbc.update("insert into words (word, reading, meaning) values (?, ?, ?)", word.word(), word.reading(), word.meaning());
     }
 
-    public void updateStatus(Long id, String status) {
-        jdbc.update("update words set status = ? where id = ?", status, id);
+    public void updateAnswer(Long id, boolean answer) {
+        jdbc.update("update words set answer = ? where id = ?", answer, id);
     }
 
     public void deleteById(Long id) {

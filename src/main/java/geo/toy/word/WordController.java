@@ -21,7 +21,9 @@ public class WordController {
 
     @GetMapping("/today")
     public Response<List<Word>> getTodayWords() {
-        return new Response<>(correctCount.get(), repository.findAllWithWeightedRandom(5));
+        var words = repository.findAllWithWeightedRandom(5);
+        repository.incrementViews(words.stream().map(Word::id).toList());
+        return new Response<>(correctCount.get(), words);
     }
 
     @PostMapping
@@ -36,13 +38,14 @@ public class WordController {
 
     @PostMapping("/today")
     public Response<List<Word>> nextWords(@RequestBody Map<Long, Boolean> results) {
-        results.forEach((id, correct) -> {
-            repository.updateStatus(id, correct ? "correct" : "wrong");
-            if (correct) {
-                correctCount.incrementAndGet();
-            }
+        results.forEach((id, answer) -> {
+            repository.updateAnswer(id, answer);
+            if (answer) correctCount.incrementAndGet();
+
         });
-        return new Response<>(correctCount.get(), repository.findAllWithWeightedRandom(5));
+        var words = repository.findAllWithWeightedRandom(5);
+        repository.incrementViews(words.stream().map(Word::id).toList());
+        return new Response<>(correctCount.get(), words);
     }
 
     public record Response<T>(int correctCount, T data) {
