@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>단어장</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/bootstrap-5.3.8-dist/css/bootstrap.min.css">
 </head>
-<body>
-    <div class="main-container">
-        <div class="header">
-            <span class="correct-count" id="correctCount">0</span>
-            <button class="settings-button" onclick="location.href='settings.html'">설정</button>
+<body class="bg-light">
+    <div class="container py-3" style="max-width: 500px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="fs-1 fw-bold text-success" id="correctCount">0</span>
+            <a href="settings.html" class="btn btn-outline-dark btn-sm">설정</a>
         </div>
 
-        <div class="word-list" id="wordList">
-            <!-- 단어 아이템들이 여기에 동적으로 추가됨 -->
+        <div class="d-flex flex-column gap-2" id="wordList">
         </div>
 
-        <button class="next-button" id="nextButton">다음</button>
+        <button class="btn btn-primary w-100 mt-3 py-3" id="nextButton">다음</button>
     </div>
 
-    <script src="app.js"></script>
+    <script src="/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let words = [];
         let checkedState = {};
@@ -37,28 +36,26 @@
         function renderWords() {
             const container = document.getElementById('wordList');
             container.innerHTML = words.map(word => `
-                <div class="word-item">
-                    <button class="word-button" data-id="${word.id}" data-showing="word">
-                        ${word.word}
-                    </button>
-                    <div class="word-checkbox">
-                        <input type="checkbox" data-id="${word.id}"
-                            ${checkedState[word.id] ? 'checked' : ''}
-                            onchange="toggleCheck(${word.id}, this.checked)">
+                <div class="card">
+                    <div class="d-flex align-items-center">
+                        <button class="btn flex-grow-1 py-3 fs-5" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
+                            ${word.word}
+                        </button>
+                        <div class="px-3 border-start">
+                            <input class="form-check-input" type="checkbox" style="width: 1.5em; height: 1.5em;"
+                                ${checkedState[word.id] ? 'checked' : ''}
+                                onchange="toggleCheck(${word.id}, this.checked)">
+                        </div>
                     </div>
                 </div>
             `).join('');
-
-            container.querySelectorAll('.word-button').forEach(btn => {
-                btn.addEventListener('click', () => toggleWord(btn));
-            });
         }
 
         function toggleWord(btn) {
             const id = btn.dataset.id;
             const word = words.find(w => w.id == id);
             if (btn.dataset.showing === 'word') {
-                btn.innerHTML = `<span class="reading-meaning">${word.reading} / ${word.meaning}</span>`;
+                btn.innerHTML = `<span class="text-secondary fs-6">${word.reading} / ${word.meaning}</span>`;
                 btn.dataset.showing = 'meaning';
             } else {
                 btn.innerHTML = word.word;

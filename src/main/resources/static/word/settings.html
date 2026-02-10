@@ -4,29 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>단어장 - 설정</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/bootstrap-5.3.8-dist/css/bootstrap.min.css">
 </head>
-<body>
-    <div class="settings-container">
-        <div class="top-bar">
-            <button class="back-button" onclick="location.href='/word'">←</button>
-            <button class="save-button" id="saveButton">저장</button>
+<body class="bg-light">
+    <div class="container py-3" style="max-width: 500px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="/word" class="btn btn-link text-dark fs-4 text-decoration-none p-0">&larr;</a>
+            <button class="btn btn-success btn-sm" id="saveButton">저장</button>
         </div>
 
-        <div class="input-section">
-            <input type="text" id="inputWord" placeholder="단어 (한자)">
-            <input type="text" id="inputReading" placeholder="음독 (한글)">
-            <input type="text" id="inputMeaning" placeholder="뜻">
+        <div class="card mb-3">
+            <div class="card-body d-flex flex-column gap-2">
+                <input type="text" class="form-control" id="inputWord" placeholder="단어 (한자)">
+                <input type="text" class="form-control" id="inputReading" placeholder="음독 (한글)">
+                <input type="text" class="form-control" id="inputMeaning" placeholder="뜻">
+            </div>
         </div>
 
-        <div class="divider"></div>
+        <hr>
 
-        <div class="all-words-list" id="allWordsList">
-            <!-- 단어 리스트가 여기에 동적으로 추가됨 -->
+        <div class="d-flex flex-column gap-2" id="allWordsList">
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let allWords = [];
 
@@ -39,12 +40,14 @@
         function renderAllWords() {
             const container = document.getElementById('allWordsList');
             container.innerHTML = allWords.map(word => `
-                <div class="all-word-item">
-                    <div class="word-info">
-                        <span class="kanji">${word.word}</span>
-                        <span class="detail">(${word.reading}) ${word.meaning}</span>
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center py-2">
+                        <div>
+                            <span class="fw-bold">${word.word}</span>
+                            <span class="text-secondary">(${word.reading}) ${word.meaning}</span>
+                        </div>
+                        <button class="btn btn-link text-danger p-0" onclick="deleteWord(${word.id})">✕</button>
                     </div>
-                    <button class="delete-button" onclick="deleteWord(${word.id})">✕</button>
                 </div>
             `).join('');
         }
