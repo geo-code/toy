@@ -9,17 +9,15 @@
 <body>
     <div class="main-container">
         <div class="header">
-            오늘 맞춘 단어: <span class="correct-count" id="correctCount">0</span>개
+            <span class="correct-count" id="correctCount">0</span>
+            <button class="settings-button" onclick="location.href='settings.html'">설정</button>
         </div>
 
         <div class="word-list" id="wordList">
             <!-- 단어 아이템들이 여기에 동적으로 추가됨 -->
         </div>
 
-        <div class="nav-bar">
-            <button class="nav-button" id="nextButton">다음</button>
-            <button class="settings-icon" onclick="location.href='settings.html'">⚙️</button>
-        </div>
+        <button class="next-button" id="nextButton">다음</button>
     </div>
 
     <script src="app.js"></script>
