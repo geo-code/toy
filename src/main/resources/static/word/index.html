@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>단어장</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            오늘 맞춘 단어: <span class="correct-count" id="correctCount">0</span>개
+        </div>
+
+        <div class="word-list" id="wordList">
+            <!-- 단어 아이템들이 여기에 동적으로 추가됨 -->
+        </div>
+
+        <div class="nav-bar">
+            <button class="nav-button" id="nextButton">다음</button>
+            <button class="settings-icon" onclick="location.href='settings.html'">⚙️</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        let words = [];
+        let checkedState = {};
+
+        async function loadWords() {
+            const response = await fetch('/api/word/today');
+            const data = await response.json();
+            words = data.data;
+            checkedState = {};
+            document.getElementById('correctCount').textContent = data.correctCount;
+            renderWords();
+        }
+
+        function renderWords() {
+            const container = document.getElementById('wordList');
+            container.innerHTML = words.map(word => `
+                <div class="word-item">
+                    <button class="word-button" data-id="${word.id}" data-showing="word">
+                        ${word.word}
+                    </button>
+                    <div class="word-checkbox">
+                        <input type="checkbox" data-id="${word.id}"
+                            ${checkedState[word.id] ? 'checked' : ''}
+                            onchange="toggleCheck(${word.id}, this.checked)">
+                    </div>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.word-button').forEach(btn => {
+                btn.addEventListener('click', () => toggleWord(btn));
+            });
+        }
+
+        function toggleWord(btn) {
+            const id = btn.dataset.id;
+            const word = words.find(w => w.id == id);
+            if (btn.dataset.showing === 'word') {
+                btn.innerHTML = `<span class="reading-meaning">${word.reading} / ${word.meaning}</span>`;
+                btn.dataset.showing = 'meaning';
+            } else {
+                btn.innerHTML = word.word;
+                btn.dataset.showing = 'word';
+            }
+        }
+
+        function toggleCheck(id, checked) {
+            checkedState[id] = checked;
+        }
+
+        async function nextWords() {
+            const results = {};
+            words.forEach(w => {
+                results[w.id] = checkedState[w.id] || false;
+            });
+
+            const response = await fetch('/api/word/today', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(results)
+            });
+            const data = await response.json();
+            words = data.data;
+            checkedState = {};
+            document.getElementById('correctCount').textContent = data.correctCount;
+            renderWords();
+        }
+
+        document.getElementById('nextButton').addEventListener('click', nextWords);
+        loadWords();
+    </script>
+</body>
+</html>
