@@ -10,13 +10,15 @@
     <div class="container py-3" style="max-width: 500px;">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <span class="fs-1 fw-bold text-success" id="correctCount">0</span>
-            <a href="settings.html" class="btn btn-outline-dark btn-sm">설정</a>
+            <a href="settings.html" class="btn btn-outline-dark btn-sm p-2">
+                <img src="/icons/list.svg" alt="설정" width="20" height="20">
+            </a>
         </div>
 
         <div class="d-flex flex-column gap-2" id="wordList">
         </div>
 
-        <button class="btn btn-primary w-100 mt-3 py-3" id="nextButton">다음</button>
+        <button class="btn btn-outline-dark w-100 mt-3 py-3" id="nextButton">다음</button>
     </div>
 
     <script src="/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
@@ -38,7 +40,7 @@
             container.innerHTML = words.map(word => `
                 <div class="card">
                     <div class="d-flex align-items-center">
-                        <button class="btn flex-grow-1 py-3 fs-5" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
+                        <button class="btn flex-grow-1 py-3 fs-3" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
                             ${word.word}
                         </button>
                         <div class="px-3 border-start">
