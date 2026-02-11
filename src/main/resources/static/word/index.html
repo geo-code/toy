@@ -40,7 +40,7 @@
             container.innerHTML = words.map(word => `
                 <div class="card">
                     <div class="d-flex align-items-center">
-                        <button class="btn flex-grow-1 py-3 fs-3" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
+                        <button class="btn flex-grow-1 py-3 fs-1" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
                             ${word.word}
                         </button>
                         <div class="px-3 border-start">
@@ -69,7 +69,7 @@
             checkedState[id] = checked;
         }
 
-        async function nextWords() {
+        async function nextTodayWords() {
             const results = {};
             words.forEach(w => {
                 results[w.id] = checkedState[w.id] || false;
@@ -87,7 +87,7 @@
             renderWords();
         }
 
-        document.getElementById('nextButton').addEventListener('click', nextWords);
+        document.getElementById('nextButton').addEventListener('click', nextTodayWords);
         loadWords();
     </script>
 </body>

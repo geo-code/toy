@@ -37,7 +37,7 @@ public class WordController {
     }
 
     @PostMapping("/today")
-    public Response<List<Word>> nextWords(@RequestBody Map<Long, Boolean> results) {
+    public Response<List<Word>> nextTodayWords(@RequestBody Map<Long, Boolean> results) {
         results.forEach((id, answer) -> {
             repository.updateAnswer(id, answer);
             if (answer) correctCount.incrementAndGet();
