@@ -40,7 +40,7 @@
             container.innerHTML = words.map(word => `
                 <div class="card">
                     <div class="d-flex align-items-center">
-                        <button class="btn flex-grow-1 py-3 fs-1" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
+                        <button class="btn flex-grow-1 py-3" style="font-size: 3rem;" data-id="${word.id}" data-showing="word" onclick="toggleWord(this)">
                             ${word.word}
                         </button>
                         <div class="px-3 border-start">
@@ -57,7 +57,7 @@
             const id = btn.dataset.id;
             const word = words.find(w => w.id == id);
             if (btn.dataset.showing === 'word') {
-                btn.innerHTML = `<span class="text-secondary fs-6">${word.reading} / ${word.meaning}</span>`;
+                btn.innerHTML = `<span class="text-secondary fs-5">${word.reading} / ${word.meaning}</span>`;
                 btn.dataset.showing = 'meaning';
             } else {
                 btn.innerHTML = word.word;
